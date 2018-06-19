@@ -1,56 +1,72 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import { connect } from 'react-redux';
+import YTPlayer from 'yt-player';
 
 import IoIosPlay from 'react-icons/lib/io/ios-play';
 import IoIosSkipbackward from 'react-icons/lib/io/ios-skipbackward';
 import IoIosSkipforward from 'react-icons/lib/io/ios-skipforward';
 
-const Player = () => {
-    const seekbarWidth = {       
-        width: '50%',      
-    };
+class Player extends Component {
 
-    const bgImage = {   
-        backgroundImage: 'url("https://i.pinimg.com/736x/93/0d/6a/930d6a65f42cf9b95353c1754b3bf3b7--chris-martin-chris-delia.jpg")'  
-    };
-    return (
-        <div className={css(styles.player)}>
-            <div style={seekbarWidth} className={css(styles.seekbar)}></div>
-            <div className={css(styles.playerContent)}>           
-                <div className={css(styles.songDetails)}>
-                    <div className={css(styles.imageContainer)}>
-                        <img 
-                        className={css(styles.image)}
-                        src="https://i.pinimg.com/736x/93/0d/6a/930d6a65f42cf9b95353c1754b3bf3b7--chris-martin-chris-delia.jpg" 
-                        alt="Avicii - Levels"
-                        />
+    componentDidMount() {
+        const player = new YTPlayer(this.refs.ytplayer);
+    }
+
+    render() {
+        const { id, title, artist, album, albumArt } = this.props.player;
+        const seekbarWidth = {       
+            width: '50%',      
+        };
+    
+        const bgImage = {   
+            backgroundImage: `url("${albumArt}")`
+        };
+
+        return (
+            <div className={css(styles.player)}>
+                <div style={seekbarWidth} className={css(styles.seekbar)}></div>
+                <div className={css(styles.playerContent)}>           
+                    <div className={css(styles.songDetails)}>
+                        <div className={css(styles.imageContainer)}>
+                            <img 
+                            className={css(styles.image)}
+                            src={albumArt}
+                            alt="Avicii - Levels"
+                            />
+                        </div>
+                        <div>
+                            <p className={css([styles.songDetail, styles.songTitle])}>{title}</p>
+                            <p className={css(styles.songDetail)}>{artist}</p>
+                            <p className={css(styles.songDetail)}>{album}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className={css([styles.songDetail, styles.songTitle])}>Waves</p>
-                        <p className={css(styles.songDetail)}>Kanye West</p>
-                        <p className={css(styles.songDetail)}>The Life of Pablo</p>
+                    <div className={css(styles.controls)}>
+                        <div>
+                            <IoIosSkipbackward color="white" size={18} />
+                        </div>
+                        <div className={css(styles.play)}>
+                            <IoIosPlay color="white" size={18} />
+                        </div>
+                        <div>
+                            <IoIosSkipforward color="white" size={18} />
+                        </div>
+                    </div>
+                    <div className={css(styles.otherControls)}>
+                        <div>
+                            <span className={css(styles.currentTime)}>1:52 - 3:02</span>
+                        </div>
+                    </div>
+                    <div style={bgImage} className={css(styles.bg)}></div>
+                    <div className={css(styles.ytframe)}>
+                       <div ref="ytplayer">
+                       </div> 
                     </div>
                 </div>
-                <div className={css(styles.controls)}>
-                    <div>
-                        <IoIosSkipbackward color="white" size={18} />
-                    </div>
-                    <div className={css(styles.play)}>
-                        <IoIosPlay color="white" size={18} />
-                    </div>
-                    <div>
-                        <IoIosSkipforward color="white" size={18} />
-                    </div>
-                </div>
-                <div className={css(styles.otherControls)}>
-                    <div>
-                        <span className={css(styles.currentTime)}>1:52 - 3:02</span>
-                    </div>
-                </div>
-                <div style={bgImage} className={css(styles.bg)}></div>
             </div>
-        </div>
-    )
+        )
+    }
+   
 }
 
 const styles = StyleSheet.create({
@@ -136,7 +152,17 @@ const styles = StyleSheet.create({
         fontSize: 10,
         opacity: 0.3,
         letterSpacing: '1px'
+    },
+
+    ytframe: {
+        display: 'none'
     }
 });
+
+function mapStateToProps(state) {
+    return {
+        player: state.player
+    }
+}
  
-export default Player;
+export default connect(mapStateToProps)(Player);
