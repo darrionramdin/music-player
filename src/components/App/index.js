@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 import Header from '../Header';
-import SelectedAlbum from '../SelectedAlbum';
-import Player from '../Player';
+import SelectedAlbum from '../../containers/SelectedAlbum';
+import Player from '../../containers/Player';
 
 class App extends Component {
   render() {

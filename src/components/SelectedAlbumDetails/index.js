@@ -3,19 +3,21 @@ import { StyleSheet, css } from 'aphrodite';
 
 import SummaryTable from '../SummaryTable';
 
-const SelectedAlbumDetails = () => {
+const SelectedAlbumDetails = ({data}) => {
+    const { name, albumArt, released, songs, duration, description } = data;
+    const songsCount = songs.length;
     const tableData = [
         {
             title: 'Released',
-            data: '2018'
+            data: released
         },
         {
             title: 'Songs',
-            data: '19'
+            data: songsCount
         },
         {
             title: 'Duration',
-            data: '59 Min'
+            data: duration
         }
     ]
     return (
@@ -23,14 +25,12 @@ const SelectedAlbumDetails = () => {
             <div className={css(styles.imageContainer)}>
                 <img 
                 className={css(styles.image)}
-                src="https://i.pinimg.com/736x/93/0d/6a/930d6a65f42cf9b95353c1754b3bf3b7--chris-martin-chris-delia.jpg"
-                alt="Avicii - Stories" />
+                src={albumArt}
+                alt={name} />
             </div>
             <SummaryTable data={tableData} />
             <p className={css(styles.description)}>
-            No depending be convinced in unfeeling he. 
-            Excellence she unaffected and too sentiments her. 
-            Rooms he doors there ye aware in by shall. 
+            {description} 
             </p>
         </div>
     )

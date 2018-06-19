@@ -1,3 +1,5 @@
+import { PLAY_SONG } from '../actions/actionTypes';
+
 const initialState = {
     id: 'EgxHqMpK1Nw',
     title: 'Levels',
@@ -7,5 +9,10 @@ const initialState = {
 }
 
 export default function(state=initialState, action) {
-    return state;
+    switch(action.type) {
+        case PLAY_SONG:
+            return action.payload;
+        default:
+            return state;
+    }
 }

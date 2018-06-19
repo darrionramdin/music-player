@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
-const SelectedAlbumHeaderInfo = () => {
+const SelectedAlbumHeaderInfo = ({data}) => {
+    const { name, artist} = data;
     return (
         <div>
-            <h1 className={css(styles.title)}>The Life of Pablo</h1>
-            <p className={css(styles.author)}><span className={css(styles.light)}>Album by</span> <a href="#/" className={css(styles.link)}>Kanye West</a></p>
+            <h1 className={css(styles.title)}>{name}</h1>
+            <p className={css(styles.author)}><span className={css(styles.light)}>Album by</span> <a href="#/" className={css(styles.link)}>{artist}</a></p>
         </div>
     )
 }

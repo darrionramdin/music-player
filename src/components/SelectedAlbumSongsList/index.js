@@ -4,10 +4,11 @@ import { css } from 'aphrodite';
 import layout from '../Layout';
 import SongsListTable from '../SongsListTable';
 
-const SelectedAlbumSongsList = () => {
+const SelectedAlbumSongsList = ({data}) => {
+    const { songs } = data;
     return (
         <div className={css(layout.container)}>
-            <SongsListTable />
+            <SongsListTable data={songs} />
         </div>
     )
 }

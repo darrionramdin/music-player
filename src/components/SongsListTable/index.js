@@ -4,7 +4,7 @@ import { StyleSheet, css } from 'aphrodite';
 import SongsListTableItem from '../SongsListTableItem';
 import timerIcon from './assets/timer.png';
 
-const SongsListTable = () => {
+const SongsListTable = ({data}) => {
     return (
         <div>
             <header className={css(styles.header)}>
@@ -12,18 +12,24 @@ const SongsListTable = () => {
                 <div><img className={css(styles.icon)} src={timerIcon} alt="Duration"/></div>
             </header>
             <div>
-                <SongsListTableItem 
-                    position="01" 
-                    title="Levels" 
-                    duration="3:00"
-                    isExplicit
-                    isPlaying 
-                />
-                <SongsListTableItem 
-                    position="02" 
-                    title="Rapture (Avicii Remix)" 
-                    duration="2:40" 
-                />
+                {
+                    data ? data.map((song, index) => {
+                        return (
+                            <SongsListTableItem
+                                key={song.id}
+                                id={song.id} 
+                                position={index} 
+                                title={song.title}
+                                artist={song.artist}
+                                duration={song.duration}
+                                album={song.album}
+                                albumArt={song.albumArt}
+                                isExplicit={song.isExplicit}
+                                isPlaying={song.isPlaying} 
+                            />
+                        )
+                    }) : <div>Loading...</div>
+                }
             </div>
         </div>
     )

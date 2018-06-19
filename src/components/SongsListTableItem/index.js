@@ -1,34 +1,44 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 
 import speakerIcon from './assets/speaker.png';
+import { playSong } from '../../actions/actions_player';
 
-const SongsListTableItem = (props) => {
-    const {position, title, duration, isExplicit, isPlaying} = props;
-    return (
-        <div className={css(styles.item)}>
-            <div className={css([styles.flex, styles.order])}>
-                <div>+</div>
-                {
-                    isPlaying ? <div className={css(styles.isPlayingIconContainer)}><img className={css(styles.isPlayingIcon)} src={speakerIcon} alt="Is Playing"/></div> : <div>{position}</div>
-                }       
-            </div>
-            <div className={css([styles.flex, styles.songInfo])}>
-                <div>
-                    <span className={css(isPlaying ? [styles.title, styles.isPlaying]: styles.title)}>{title}</span>
+class SongsListTableItem extends Component {
+
+    selectSong = (id, title, artist, album, albumArt) => {
+        this.props.playSong(id, title, artist, album, albumArt);
+    }
+
+    render() {
+        const {id, position, title, duration, album, albumArt, artist, isExplicit} = this.props;
+        const isPlaying = id === this.props.player.id;
+        return (
+            <div onClick={() => this.selectSong(id, title, artist, album, albumArt )} className={css(styles.item)}>
+                <div className={css([styles.flex, styles.order])}>
+                    <div>+</div>
+                    {
+                        isPlaying ? <div className={css(styles.isPlayingIconContainer)}><img className={css(styles.isPlayingIcon)} src={speakerIcon} alt="Is Playing"/></div> : <div>{position}</div>
+                    }       
                 </div>
-                {
-                    isExplicit ? <div className={css(styles.explicitTag)}>
-                        <span>Explicit</span>
-                    </div> : <div></div>
-                }
-                
+                <div className={css([styles.flex, styles.songInfo])}>
+                    <div>
+                        <span className={css(isPlaying ? [styles.title, styles.isPlaying]: styles.title)}>{title}</span>
+                    </div>
+                    {
+                        isExplicit ? <div className={css(styles.explicitTag)}>
+                            <span>Explicit</span>
+                        </div> : <div></div>
+                    }
+                    
+                </div>
+                <div>
+                    <span className={css(isPlaying ? [styles.duration, styles.isPlaying] : styles.duration)}>{duration}</span>
+                </div>
             </div>
-            <div>
-                <span className={css(isPlaying ? [styles.duration, styles.isPlaying] : styles.duration)}>{duration}</span>
-            </div>
-        </div>
-    )
+        )
+    }        
 }
 
 const styles = StyleSheet.create({
@@ -101,6 +111,12 @@ const styles = StyleSheet.create({
         width: 'auto',
         height: '50%'
     }
-})
+});
+
+function mapStateToProps(state) {
+    return {
+        player: state.player
+    }
+}
  
-export default SongsListTableItem;
+export default connect(mapStateToProps, { playSong })(SongsListTableItem);

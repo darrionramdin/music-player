@@ -2,13 +2,13 @@ import React from 'react';
 
 import SelectedAlbumHeaderInfo from '../SelectedAlbumHeaderInfo';
 
-const SelectedAlbumHeader = () => {
+const SelectedAlbumHeader = ({data}) => {
     const style = {
         margin: 30
     }
     return (
         <div style={style}>
-            <SelectedAlbumHeaderInfo />
+            <SelectedAlbumHeaderInfo data={data} />
         </div>
     )
 }
