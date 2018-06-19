@@ -26,15 +26,17 @@ const styles = StyleSheet.create({
     width: '1120px',
     height: '700px',
     background: '#121315',
-    boxShadow: '0px 0px 15px rgba(0,0,0,0.2)'
+    boxShadow: '0px 0px 15px rgba(0,0,0,0.2)',
+    overflow: 'hidden'
   },
 
   layout: {
     height: '100%',
+    width: '100%',
     color: 'white',
     display: 'grid',
     gridTemplateColumns: '72px 210px auto',
-    gridAutoRows: 'min-content 580px auto'
+    gridAutoRows: 'min-content 590px auto'
   }
 })
 
