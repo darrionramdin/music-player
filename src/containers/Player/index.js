@@ -7,13 +7,38 @@ import IoIosPlay from 'react-icons/lib/io/ios-play';
 import IoIosSkipbackward from 'react-icons/lib/io/ios-skipbackward';
 import IoIosSkipforward from 'react-icons/lib/io/ios-skipforward';
 
-class Player extends Component {
+class Player extends Component {  
+    state = {
+        currentSong: this.props.player.id
+    } 
 
     componentDidMount() {
-        const player = new YTPlayer(this.refs.ytplayer);
+        this.player = new YTPlayer(this.refs.ytplayer);
+        this.loadSong(this.state.currentSong);
+    }
+
+    loadSong = (song) => {
+        if (this.refs.ytplayer) {
+            this.player.load(song);
+        }
+    }
+
+    stopSong = () => {
+        this.player.stop();
+    }
+
+    playSong = () => {
+        this.player.play();
     }
 
     render() {
+        // If the loaded song is not the new song in the state, change the state to the the new song and play it.
+        if (this.props.player.id !== this.state.currentSong) {
+            this.stopSong();
+            this.loadSong(this.props.player.id);
+            this.playSong();    
+            this.setState( { currentSong: this.props.player.id } );
+        }    
         const { id, title, artist, album, albumArt } = this.props.player;
         const seekbarWidth = {       
             width: '50%',      
@@ -45,9 +70,9 @@ class Player extends Component {
                         <div>
                             <IoIosSkipbackward color="white" size={18} />
                         </div>
-                        <div className={css(styles.play)}>
+                        <button onClick={this.playSong} className={css(styles.play)}>
                             <IoIosPlay color="white" size={18} />
-                        </div>
+                        </button>
                         <div>
                             <IoIosSkipforward color="white" size={18} />
                         </div>
@@ -90,7 +115,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyItems: 'space-between',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
 
     bg: {
@@ -100,6 +125,7 @@ const styles = StyleSheet.create({
         backgroundSize: 'cover',
         filter: 'blur(120px)',
         position: 'absolute',
+        zIndex: 1
     },
 
     imageContainer: {
@@ -139,7 +165,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         border: '1px solid white',
         padding: '8px 8px 8px 9px',
-        borderRadius: 100
+        borderRadius: 100,
+        zIndex: 2
     },
 
     otherControls: {

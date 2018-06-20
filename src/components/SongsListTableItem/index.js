@@ -8,7 +8,8 @@ import { playSong } from '../../actions/actions_player';
 class SongsListTableItem extends Component {
 
     selectSong = (id, title, artist, album, albumArt) => {
-        this.props.playSong(id, title, artist, album, albumArt);
+        const song = {id, title, artist, album, albumArt};
+        this.props.playSong(song);
     }
 
     render() {
