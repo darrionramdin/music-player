@@ -6,10 +6,16 @@ import YTPlayer from 'yt-player';
 import IoIosPlay from 'react-icons/lib/io/ios-play';
 import IoIosSkipbackward from 'react-icons/lib/io/ios-skipbackward';
 import IoIosSkipforward from 'react-icons/lib/io/ios-skipforward';
+import IoIosPause from 'react-icons/lib/io/ios-pause';
 
 class Player extends Component {  
     state = {
-        currentSong: this.props.player.id
+        currentSong: this.props.player.id,
+        isPlaying: false,
+        isPaused: false,
+        songProgress: 0,
+        currentTime: 0,
+        duration: 0
     } 
 
     componentDidMount() {
@@ -17,10 +23,41 @@ class Player extends Component {
         this.loadSong(this.state.currentSong);
     }
 
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(nextProps.player.id !== prevState.currentSong){
+          return { currentSong: nextProps.player.id};
+       } else {
+           return null;
+       }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.player.id !== this.props.player.id){
+          //Perform some operation here
+          this.setState({currentSong: this.props.player.id});
+          this.stopSong();
+          this.loadSong(this.state.currentSong);
+          this.playSong();
+        }
+      }
+
     loadSong = (song) => {
         if (this.refs.ytplayer) {
             this.player.load(song);
         }
+        
+    }
+
+    getProgress = () => {
+        this.interval = setInterval(() => {
+                const progress = (this.player.getCurrentTime()/this.player.getDuration()) * 100;
+                this.setState({ songProgress: progress, currentTime: `${Math.round(Math.floor(this.player.getCurrentTime()/60))}:${Math.round(this.player.getCurrentTime()%60)}` });
+                console.log(this.state.currentTime);
+        }, 1000)
     }
 
     stopSong = () => {
@@ -28,20 +65,38 @@ class Player extends Component {
     }
 
     playSong = () => {
+        
         this.player.play();
+        this.setState( { isPlaying: true } );
+        this.player.on('playing', () => {
+            this.setState( { duration: `${Math.round(Math.floor(this.player.getDuration()/60))}:${Math.round(this.player.getDuration()%60)}`} )
+            this.getProgress();
+        });
+        this.player.on('ended', () => {
+            clearInterval(this.interval);
+        })
+    }
+
+    pauseSong = () => {
+        this.player.pause();
+        this.setState( { isPlaying: false } );
+        clearInterval(this.interval);
     }
 
     render() {
         // If the loaded song is not the new song in the state, change the state to the the new song and play it.
-        if (this.props.player.id !== this.state.currentSong) {
-            this.stopSong();
-            this.loadSong(this.props.player.id);
-            this.playSong();    
-            this.setState( { currentSong: this.props.player.id } );
-        }    
+        // if (this.props.player.id !== this.state.currentSong) {
+        //     this.stopSong;
+        //     this.loadSong(this.props.player.id);
+        //     this.playSong;    
+        //     this.setState( { currentSong: this.props.player.id } );
+        // }    
         const { id, title, artist, album, albumArt } = this.props.player;
+        const { isPlaying } = this.state;
+
         const seekbarWidth = {       
-            width: '50%',      
+            width: `${this.state.songProgress}%`, 
+            transition: 'width 0.3s ease-in'  
         };
     
         const bgImage = {   
@@ -70,16 +125,23 @@ class Player extends Component {
                         <div>
                             <IoIosSkipbackward color="white" size={18} />
                         </div>
-                        <button onClick={this.playSong} className={css(styles.play)}>
-                            <IoIosPlay color="white" size={18} />
-                        </button>
+                        {
+                            isPlaying ? 
+                            <div onClick={this.pauseSong} className={css(styles.play)}>
+                                <IoIosPause color="white" size={18} />
+                            </div>
+                            :
+                            <div onClick={this.playSong} className={css(styles.play)}>
+                                <IoIosPlay color="white" size={18} />
+                            </div>
+                        }
                         <div>
                             <IoIosSkipforward color="white" size={18} />
                         </div>
                     </div>
                     <div className={css(styles.otherControls)}>
                         <div>
-                            <span className={css(styles.currentTime)}>1:52 - 3:02</span>
+                            <span className={css(styles.currentTime)}>{this.state.currentTime} - {this.state.duration}</span>
                         </div>
                     </div>
                     <div style={bgImage} className={css(styles.bg)}></div>
