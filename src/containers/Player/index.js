@@ -54,9 +54,10 @@ class Player extends Component {
 
     getProgress = () => {
         this.interval = setInterval(() => {
+            if(this.state.isPlaying){
                 const progress = (this.player.getCurrentTime()/this.player.getDuration()) * 100;
                 this.setState({ songProgress: progress, currentTime: `${Math.round(Math.floor(this.player.getCurrentTime()/60))}:${Math.round(this.player.getCurrentTime()%60)}` });
-                console.log(this.state.currentTime);
+            } 
         }, 1000)
     }
 
@@ -64,26 +65,22 @@ class Player extends Component {
         this.player.stop();
     }
 
-    playSong = () => {
-        
-        this.player.play();
+    playSong = () => {   
         this.setState( { isPlaying: true } );
-        this.player.on('playing', () => {
-            this.setState( { duration: `${Math.round(Math.floor(this.player.getDuration()/60))}:${Math.round(this.player.getDuration()%60)}`} )
-            this.getProgress();
-        });
-        this.player.on('ended', () => {
-            clearInterval(this.interval);
-        })
+        clearInterval(this.interval);  
+        this.player.play();
+        this.getProgress();
     }
 
-    pauseSong = () => {
-        this.player.pause();
+    pauseSong = () => {      
         this.setState( { isPlaying: false } );
         clearInterval(this.interval);
+        this.player.pause();
+        clearInterval(this.interval);    
     }
 
     render() {
+        console.log(this.state.currentTime);
         // If the loaded song is not the new song in the state, change the state to the the new song and play it.
         // if (this.props.player.id !== this.state.currentSong) {
         //     this.stopSong;
