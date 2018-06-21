@@ -5,12 +5,9 @@ import SelectedAlbumDetails from '../../components/SelectedAlbumDetails';
 import SelectedAlbumHeader from '../../components/SelectedAlbumHeader';
 import SelectedAlbumSongsList from '../../components/SelectedAlbumSongsList';
 import { playSong } from '../../actions/actions_player'; 
+import { loadList } from '../../actions/actions_playlist'; 
 
 class SelectedAlbum extends Component {
-    componentDidMount() {
-        // this.props.playSong(data);
-    }
-    
     render(){
         const style = {
             height: '100%',
@@ -37,4 +34,4 @@ function mapStateToProps(state) {
     }
 }
  
-export default connect(mapStateToProps, { playSong })(SelectedAlbum);
+export default connect(mapStateToProps, { playSong, loadList })(SelectedAlbum);

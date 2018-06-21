@@ -7,26 +7,36 @@ import IoIosPlay from 'react-icons/lib/io/ios-play';
 import IoIosSkipbackward from 'react-icons/lib/io/ios-skipbackward';
 import IoIosSkipforward from 'react-icons/lib/io/ios-skipforward';
 import IoIosPause from 'react-icons/lib/io/ios-pause';
+import { playSong } from '../../actions/actions_player';
 
 class Player extends Component {  
     state = {
-        currentSong: this.props.player.id,
+        songsList: [],
+        currentSong: '' ,
         isPlaying: false,
         isPaused: false,
         songProgress: 0,
         currentTime: 0,
-        duration: 0
+        duration: 0,
+        currentPos: 1
     } 
 
+    // On Mount, create the iframe and load the song in it.
     componentDidMount() {
+        this.setState({ 
+            songsList: this.props.selectedAlbum.songs,
+            currentSong: this.props.player.id
+        })
         this.player = new YTPlayer(this.refs.ytplayer);
         this.loadSong(this.state.currentSong);
     }
 
+    // When the component leaves, clear the interval
     componentWillUnmount() {
         clearInterval(this.interval);
     }
 
+    // Recieve new props when props is updated
     static getDerivedStateFromProps(nextProps, prevState){
         if(nextProps.player.id !== prevState.currentSong){
           return { currentSong: nextProps.player.id};
@@ -35,6 +45,7 @@ class Player extends Component {
        }
     }
 
+    // When props is updated, load the song provided and play it.
     componentDidUpdate(prevProps, prevState) {
         if(prevProps.player.id !== this.props.player.id){
           //Perform some operation here
@@ -45,26 +56,27 @@ class Player extends Component {
         }
       }
 
+    // Loads the song into the iframe
     loadSong = (song) => {
         if (this.refs.ytplayer) {
             this.player.load(song);
-        }
-        
+        }       
     }
 
+    // Get the progress time of the song in the format m:s
     getProgress = () => {
         this.interval = setInterval(() => {
             if(this.state.isPlaying){
                 const progress = (this.player.getCurrentTime()/this.player.getDuration()) * 100;
-                this.setState({ songProgress: progress, currentTime: `${Math.round(Math.floor(this.player.getCurrentTime()/60))}:${Math.round(this.player.getCurrentTime()%60)}` });
+                this.setState({ 
+                    songProgress: progress, currentTime: `${Math.round(Math.floor(this.player.getCurrentTime()/60))}:${Math.round(this.player.getCurrentTime()%60)}`,
+                    duration: `${Math.round(Math.floor(this.player.getDuration()/60))}:${Math.round(this.player.getDuration()%60)}` 
+                });
             } 
         }, 1000)
     }
-
-    stopSong = () => {
-        this.player.stop();
-    }
-
+    
+    // Call the iFrame play function
     playSong = () => {   
         this.setState( { isPlaying: true } );
         clearInterval(this.interval);  
@@ -72,6 +84,11 @@ class Player extends Component {
         this.getProgress();
     }
 
+    stopSong = () => {
+        this.player.stop();
+    }
+
+    // Pause the iframe
     pauseSong = () => {      
         this.setState( { isPlaying: false } );
         clearInterval(this.interval);
@@ -79,15 +96,43 @@ class Player extends Component {
         clearInterval(this.interval);    
     }
 
+    // Increment the position counter
+    increasePos = () => {
+        this.setState( { currentPos: this.state.currentPos + 1 } );
+    }
+
+    // Decrement the position counter
+    decreasePos = () => {
+        this.setState( { currentPos: this.state.currentPos - 1 } );
+    }
+
+    // Reset the position counter
+    resetPos = () => {
+        this.setState( { currentPos: 0 } )
+    }
+
+    // Skip To Another Song in the list of songs provided by the album
+    skipSong = () => {
+        clearInterval(this.interval); 
+        if (this.state.currentPos < this.props.selectedAlbum.songs.length -1) {
+            this.increasePos();
+            this.props.playSong(this.props.selectedAlbum.songs[this.state.currentPos]);  
+        } else {
+            this.resetPos();
+            this.props.playSong(this.props.selectedAlbum.songs[this.state.currentPos]);  
+        }
+        
+    }
+
+    // Go back To previous Song in the list of songs provided by the album
+    prevSong = () => {
+        if (this.state.currentPos > 0) {
+            this.decreasePos();
+            this.props.playSong(this.props.selectedAlbum.songs[this.state.currentPos]);
+        }
+    }
+
     render() {
-        console.log(this.state.currentTime);
-        // If the loaded song is not the new song in the state, change the state to the the new song and play it.
-        // if (this.props.player.id !== this.state.currentSong) {
-        //     this.stopSong;
-        //     this.loadSong(this.props.player.id);
-        //     this.playSong;    
-        //     this.setState( { currentSong: this.props.player.id } );
-        // }    
         const { id, title, artist, album, albumArt } = this.props.player;
         const { isPlaying } = this.state;
 
@@ -119,7 +164,7 @@ class Player extends Component {
                         </div>
                     </div>
                     <div className={css(styles.controls)}>
-                        <div>
+                        <div onClick={this.prevSong}>
                             <IoIosSkipbackward color="white" size={18} />
                         </div>
                         {
@@ -132,7 +177,7 @@ class Player extends Component {
                                 <IoIosPlay color="white" size={18} />
                             </div>
                         }
-                        <div>
+                        <div onClick={this.skipSong}>
                             <IoIosSkipforward color="white" size={18} />
                         </div>
                     </div>
@@ -214,7 +259,8 @@ const styles = StyleSheet.create({
     controls: {
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: 2
     },
 
     play: {
@@ -231,7 +277,8 @@ const styles = StyleSheet.create({
     otherControls: {
         display: 'flex',
         justifyContent: 'flex-end',
-        alignItems: 'center'
+        alignItems: 'center',
+        
     },
 
     currentTime: {
@@ -247,8 +294,9 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
     return {
-        player: state.player
+        player: state.player,
+        selectedAlbum: state.selectedAlbum
     }
 }
  
-export default connect(mapStateToProps)(Player);
+export default connect(mapStateToProps, { playSong })(Player);
