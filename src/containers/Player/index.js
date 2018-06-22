@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import YTPlayer from 'yt-player';
 
 import IoIosPlay from 'react-icons/lib/io/ios-play';
-import IoIosSkipbackward from 'react-icons/lib/io/ios-skipbackward';
-import IoIosSkipforward from 'react-icons/lib/io/ios-skipforward';
 import IoIosPause from 'react-icons/lib/io/ios-pause';
 import { playSong } from '../../actions/actions_player';
 
@@ -133,7 +131,7 @@ class Player extends Component {
     }
 
     render() {
-        const { id, title, artist, album, albumArt } = this.props.player;
+        const {title, artist, album, albumArt } = this.props.player;
         const { isPlaying } = this.state;
 
         const seekbarWidth = {       
@@ -164,9 +162,9 @@ class Player extends Component {
                         </div>
                     </div>
                     <div className={css(styles.controls)}>
-                        <div onClick={this.prevSong}>
+                        {/* <div onClick={this.prevSong}>
                             <IoIosSkipbackward color="white" size={18} />
-                        </div>
+                        </div> */}
                         {
                             isPlaying ? 
                             <div onClick={this.pauseSong} className={css(styles.play)}>
@@ -177,9 +175,9 @@ class Player extends Component {
                                 <IoIosPlay color="white" size={18} />
                             </div>
                         }
-                        <div onClick={this.skipSong}>
+                        {/* <div onClick={this.skipSong}>
                             <IoIosSkipforward color="white" size={18} />
-                        </div>
+                        </div> */}
                     </div>
                     <div className={css(styles.otherControls)}>
                         <div>
@@ -227,7 +225,7 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
-        filter: 'blur(120px)',
+        filter: 'blur(80px)',
         position: 'absolute',
         zIndex: 1
     },

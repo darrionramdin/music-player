@@ -4,6 +4,7 @@ import { StyleSheet, css } from 'aphrodite';
 import Header from '../Header';
 import SelectedAlbum from '../../containers/SelectedAlbum';
 import Player from '../../containers/Player';
+import SideNav from '../SideNav';
 
 class App extends Component {
   render() {
@@ -11,8 +12,8 @@ class App extends Component {
       <div className={css(styles.screen)}>
         <div className={css(styles.layout)}>
           <Header />
-          <div>1</div>
-          <div>2</div>
+          <div></div> 
+          <SideNav />
           <SelectedAlbum />
           <Player />
         </div>
