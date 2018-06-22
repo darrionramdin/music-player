@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import { connect } from 'react-redux';
-import YTPlayer from 'yt-player';
+import YTPlayer from '../../services/ytplayer';
 
 import IoIosPlay from 'react-icons/lib/io/ios-play';
 import IoIosPause from 'react-icons/lib/io/ios-pause';

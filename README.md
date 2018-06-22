@@ -1,11 +1,13 @@
 ### Introduction
 
-![alt text](./v1_ma_spotify_album_full.jpg "Final")
-The design was by Max Axell on Dribbble.
+![alt text](./screenshot.png "Final")
 
-
-This personal project is currently a work in progress. It is a Music Player App being built in React & Redux. The idea is that it will be able to play youtube videos through its iFrame. The IFrame won't be shown but the user will be presented with a music player component with the controls that will control the functions such as pause and play. 
+The music player showcases an album with its list of songs inspired by spotify. It uses Youtube IFrame to play and control the player and its songs. It takes the Youtube Video ID and plays it in the IFrame without showing the IFrame. The IFrame is then controlled using the Player Component, giving it more "music app" like feel.
 
 ### Technologies
-React & Redux
-Aphrodite - Styling
+* React & Redux
+* Aphrodite - Styling
+* YouTube IFrame API
+
+### Installation
+To run locally, clone the repo, run yarn install to install the needed depencies, and yarn start to start the local server.
